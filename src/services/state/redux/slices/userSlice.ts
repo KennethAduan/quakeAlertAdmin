@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // Modify the state type and arg types to match your needs
 interface userState {
-  user: { username: string; password: string };
+  user: { username: string; password: string; userId: string; firstName: string; lastName: string };
   isAuthenticated: boolean;
 }
 
 const initialState: userState = {
-  user: { username: '', password: '' },
+  user: { username: '', password: '', userId: '', firstName: '', lastName: '' },
   isAuthenticated: false,
 };
 

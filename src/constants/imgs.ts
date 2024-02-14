@@ -3,9 +3,8 @@ import { ImageSourcePropType } from 'react-native';
 
 export const images: { [key: string]: ImageSourcePropType } = {
   // Change this images
-  // GoogleIcon: require('../../assets/imgs/GoogleIcon.png'),
-  // AppLogoLight: require('../../assets/imgs/AppLogoLight.png'),
-  // AppLogoDark: require('../../assets/imgs/AppLogoDark.png'),
+  logoBanner: require('../../assets/images/logoBanner.png'),
+  logoBanner2: require('../../assets/images/logoBanner2.png'),
 };
 
 type VirtualAssetModuleType = number | string;

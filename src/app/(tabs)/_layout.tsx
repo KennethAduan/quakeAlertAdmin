@@ -1,57 +1,77 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, StyleSheet } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={styles.tabBarIcon} {...props} />;
-}
-
-export default function TabLayout() {
+import { COLORS } from '~/src/constants/color';
+const Layout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'black',
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarLabelStyle: {
+          fontFamily: 'PoppinsBold',
+          // marginBottom: hp(0.1),
+        },
+        headerStyle: {
+          backgroundColor: COLORS.primary,
+        },
+        headerShown: true,
+        headerTintColor: COLORS.white,
+        headerTitleAlign: 'center',
+        tabBarShowLabel: false,
+        // headerTransparent: true,
+        // headerRight: () => <LogoRightSide />,
       }}>
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color="gray"
-                    style={[styles.headerRight, { opacity: pressed ? 0.5 : 1 }]}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: 'Home',
+          tabBarIcon: ({ size, color, focused }) =>
+            focused ? (
+              <Ionicons name="home" size={size} color={color} />
+            ) : (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="sos"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'SOS',
+
+          tabBarIcon: ({ size, color, focused }) =>
+            focused ? (
+              <MaterialCommunityIcons name="bell-ring" size={size} color={color} />
+            ) : (
+              <MaterialCommunityIcons name="bell-ring-outline" size={size} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="residents"
+        options={{
+          title: 'Residents',
+          tabBarIcon: ({ size, color, focused }) =>
+            focused ? (
+              <Ionicons name="people-circle" size={size} color={color} />
+            ) : (
+              <Ionicons name="people-circle-outline" size={size} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ size, color, focused }) =>
+            focused ? (
+              <Ionicons name="person-sharp" size={size} color={color} />
+            ) : (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
         }}
       />
     </Tabs>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  headerRight: {
-    marginRight: 15,
-  },
-  tabBarIcon: {
-    marginBottom: -3,
-  },
-});
+export default Layout;

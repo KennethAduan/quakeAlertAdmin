@@ -1,23 +1,50 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { useEffect } from 'react';
 
 import AppProviders from '../services/providers';
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
+import { useAppSelector } from '../services/state/redux/hooks';
+
+// export const unstable_settings = {
+//   // Ensure that reloading on `/modal` keeps a back button present.
+//   initialRouteName: '(tabs)',
+// };
 
 export default function RootLayout() {
   return (
     <AppProviders>
-      <_layout />
+      <MainLayout />
     </AppProviders>
   );
 }
 
-function _layout() {
+function MainLayout() {
+  const { isAuthenticated } = useAppSelector((state) => state.user);
+  const segments = useSegments();
+  const router = useRouter();
+  console.log(isAuthenticated);
+  useEffect(() => {
+    if (isAuthenticated === undefined) {
+      console.log('You are not authenticated');
+      return;
+    }
+
+    const inApp = segments[0] === '(tabs)';
+
+    if (isAuthenticated && !inApp) {
+      router.replace('/home');
+    } else if (isAuthenticated === false) {
+      router.replace('/signIn');
+    }
+  }, [isAuthenticated]);
+
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(tabs)" />
+      {/* <Stack.Screen name="(settings)" /> */}
     </Stack>
   );
 }

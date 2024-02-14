@@ -21,7 +21,7 @@ function MainLayout() {
   const { isAuthenticated } = useAppSelector((state) => state.user);
   const segments = useSegments();
   const router = useRouter();
-  console.log(isAuthenticated);
+  // console.log(isAuthenticated);
   useEffect(() => {
     if (isAuthenticated === undefined) {
       console.log('You are not authenticated');

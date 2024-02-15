@@ -5,6 +5,8 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
+
+import CustomHeading from '../ui/CustomHeading';
 interface ResidentCardProps {
   firstName: string;
   lastName: string;
@@ -14,25 +16,32 @@ interface ResidentCardProps {
 }
 const ResidentCard = ({ firstName, lastName, address, contactNo, email }: ResidentCardProps) => {
   return (
-    <Box width={wp(90)} height={hp(22)} bgColor="#CCCDCD" borderRadius={wp(4)} my={hp(1)}>
+    <Box width={wp(90)} height="auto" py={hp(2)} bgColor="#CCCDCD" borderRadius={wp(4)} my={hp(1)}>
       <VStack mx={wp(5)} mt={hp(1.2)} space="lg">
+        <CustomHeading text="Resident Personal Details" size={2} />
         <HStack space="sm">
-          <Ionicons name="person-circle-outline" size={24} color="black" />
-          <Text color="black">
+          <Ionicons name="person-circle-outline" size={20} color="black" />
+          <Text color="black" size="sm">
             {firstName} {lastName}
           </Text>
         </HStack>
         <HStack space="sm">
-          <Ionicons name="location" size={24} color="black" />
-          <Text color="black">{address}</Text>
+          <Ionicons name="location-outline" size={20} color="black" />
+          <Text color="black" size="sm">
+            {address}
+          </Text>
         </HStack>
         <HStack space="sm">
-          <Ionicons name="call" size={24} color="black" />
-          <Text color="black">{contactNo}</Text>
+          <Ionicons name="call-outline" size={20} color="black" />
+          <Text color="black" size="sm">
+            {contactNo}
+          </Text>
         </HStack>
         <HStack space="sm">
-          <Ionicons name="mail" size={24} color="black" />
-          <Text color="black">{email}</Text>
+          <Ionicons name="mail-outline" size={20} color="black" />
+          <Text color="black" size="sm">
+            {email}
+          </Text>
         </HStack>
       </VStack>
     </Box>

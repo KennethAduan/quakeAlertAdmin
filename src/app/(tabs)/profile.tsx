@@ -1,36 +1,22 @@
 import { FontAwesome5 } from '@expo/vector-icons';
-import { VStack, Text, Box, Divider, HStack } from '@gluestack-ui/themed';
+import { VStack, Text, Box, Divider } from '@gluestack-ui/themed';
+import { Link } from 'expo-router';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 import { CustomHeading } from '~/src/components';
 import { ScreenWrapper } from '~/src/components/layouts';
 import { COLORS } from '~/src/constants/color';
+import FetchUserData from '~/src/hooks/firebase/fetchUserData';
 import { useAppDispatch } from '~/src/services/state/redux/hooks';
 import { logoutUserRedux } from '~/src/services/state/redux/slices/userSlice';
-import FetchUserData from '~/src/hooks/firebase/fetchUserData';
-import { Link } from 'expo-router';
-const TextFormatter = (text: string) => {
-  return (
-    <Text fontWeight="bold" color="black" size="lg">
-      {text}
-    </Text>
-  );
-};
 
-const TextFormatterDetails = (text: string) => {
-  return (
-    <Text color="black" size="lg">
-      {text}
-    </Text>
-  );
-};
 const Page = () => {
   const { userData, loading } = FetchUserData();
 

@@ -1,7 +1,7 @@
 import { VStack, Text } from '@gluestack-ui/themed';
-import { updateDoc, query, collection, where } from 'firebase/firestore';
-import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { updateDoc, query, collection, where, doc, getDocs } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Toast, ALERT_TYPE } from 'react-native-alert-notification';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'react-native-responsive-screen';
 
 import { GlueStackInputField, CustomHeading } from '~/src/components';
-import { KeyboardScreenWrapper } from '~/src/components/layouts';
+import { ScreenWrapper } from '~/src/components/layouts';
 import { COLORS } from '~/src/constants/color';
 import FetchUserData from '~/src/hooks/firebase/fetchUserData';
 import { db } from '~/src/services/firebase/config';
@@ -19,41 +19,53 @@ const Page = () => {
   const { userData, loading } = FetchUserData();
   const userId = userData?.userId;
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isloading, setLoading] = useState(false);
+  const [formState, setFormState] = useState({
+    firstName: userData?.firstName || '',
+    lastName: userData?.lastName || '',
+    username: userData?.username || '',
+    password: userData?.password || '',
+    contactNo: userData?.contactNo || '',
+    address: userData?.address || '',
+  });
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setFormState((prevFormState) => ({
+      ...prevFormState,
+      ...userData,
+    }));
+  }, [userData]);
+
+  const handleInputChange = (key: any, value: string) => {
+    setFormState((prevFormState) => ({
+      ...prevFormState,
+      [key]: value,
+    }));
+  };
 
   const handleSaveProfile = async () => {
-    if (firstName === '' && lastName === '' && username === '' && password === '') {
-      // If all fields are empty, do not update
-      return;
-    }
+    if (!userId) return;
 
-    const userQuery = query(collection(db, 'admin'), where('userId', '==', userId));
-
-    // Data to update
-    const newData = {
-      firstName: firstName !== '' ? firstName : userData?.firstName,
-      lastName: lastName !== '' ? lastName : userData?.lastName,
-      username: username !== '' ? username : userData?.username,
-      password: password !== '' ? password : userData?.password,
-    };
-
-    // Update the document
     try {
       setLoading(true);
-      await updateDoc(userQuery, newData);
+      const userQuery = query(collection(db, 'admin'), where('userId', '==', userId));
+      const querySnapshot = await getDocs(userQuery);
+
+      if (querySnapshot.empty) {
+        throw new Error('User document not found');
+      }
+
+      const userDocRef = doc(db, 'admin', querySnapshot.docs[0].id);
+
+      // Update the document
+      await updateDoc(userDocRef, formState);
       Toast.show({
         type: ALERT_TYPE.SUCCESS,
         title: 'Update Success',
         autoClose: true,
         textBody: 'Profile updated successfully',
       });
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
       Toast.show({
         type: ALERT_TYPE.DANGER,
         title: 'Update failed',
@@ -67,79 +79,82 @@ const Page = () => {
   };
 
   return (
-    <KeyboardScreenWrapper>
-      <Spinner visible={loading} color={COLORS.primary} />
-      <Spinner visible={isloading} color={COLORS.primary} />
-      <VStack mt={hp(10)} space="lg">
-        {/* First name */}
-        <VStack>
-          <CustomHeading text="First Name" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={firstName}
-            onChangeText={(text) => setFirstName(text)}
-            placeholder={userData?.firstName}
-          />
-        </VStack>
-        {/* Last name */}
-        <VStack>
-          <CustomHeading text="Last Name" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={lastName}
-            onChangeText={(text) => setLastName(text)}
-            placeholder={userData?.lastName}
-          />
-        </VStack>
-        {/* username */}
-        <VStack>
-          <CustomHeading text="Username" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-            placeholder={userData?.username}
-          />
-        </VStack>
-        {/* Password */}
-        <VStack>
-          <CustomHeading text="Password" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            placeholder={userData?.password}
-          />
-        </VStack>
-        {/* Address */}
-        {/* <VStack>
-          <CustomHeading text="Address" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={address}
-            onChangeText={(text) => setAddress(text)}
-            placeholder={userData?.address}
-          />
-        </VStack> */}
-        {/* Contact No */}
-        {/* <VStack>
-          <CustomHeading text="Contact No" size={2} textAlign="left" />
-          <GlueStackInputField
-            value={contactNo}
-            onChangeText={(text) => setContactNo(text)}
-            placeholder={userData?.contactNo}
-            keyboard="number-pad"
-          />
-        </VStack> */}
-        <TouchableOpacity
-          style={{
-            backgroundColor: COLORS.primary,
-            height: hp(5),
-            justifyContent: 'center',
-            borderRadius: wp(2),
-          }}
-          onPress={handleSaveProfile}>
-          <Text color="white" textAlign="center" size="lg" fontFamily="PoppinsBold">
-            Save Profile
-          </Text>
-        </TouchableOpacity>
-      </VStack>
-    </KeyboardScreenWrapper>
+    <ScrollView>
+      <KeyboardAvoidingView>
+        <ScreenWrapper>
+          <Spinner visible={loading || isLoading} color={COLORS.primary} />
+          <VStack mt={hp(10)} space="lg">
+            {/* First name */}
+            <VStack>
+              <CustomHeading text="First Name" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.firstName}
+                onChangeText={(text) => handleInputChange('firstName', text)}
+                placeholder={userData?.firstName}
+              />
+            </VStack>
+            {/* Last name */}
+            <VStack>
+              <CustomHeading text="Last Name" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.lastName}
+                onChangeText={(text) => handleInputChange('lastName', text)}
+                placeholder={userData?.lastName}
+              />
+            </VStack>
+            {/* username */}
+            <VStack>
+              <CustomHeading text="Username" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.username}
+                onChangeText={(text) => handleInputChange('username', text)}
+                placeholder={userData?.username}
+              />
+            </VStack>
+            {/* Password */}
+            <VStack>
+              <CustomHeading text="Password" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.password}
+                onChangeText={(text) => handleInputChange('password', text)}
+                placeholder={userData?.password}
+              />
+            </VStack>
+            {/* Address */}
+            <VStack>
+              <CustomHeading text="Address" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.address}
+                onChangeText={(text) => handleInputChange('address', text)}
+                placeholder={userData?.address}
+              />
+            </VStack>
+            {/* Contact No */}
+            <VStack>
+              <CustomHeading text="Contact No" size={2} textAlign="left" />
+              <GlueStackInputField
+                value={formState.contactNo}
+                onChangeText={(text) => handleInputChange('contactNo', text)}
+                placeholder={userData?.contactNo}
+                keyboard="number-pad"
+              />
+            </VStack>
+            <TouchableOpacity
+              style={{
+                backgroundColor: COLORS.primary,
+                height: hp(5),
+                justifyContent: 'center',
+                borderRadius: wp(2),
+              }}
+              onPress={handleSaveProfile}>
+              <Text color="white" textAlign="center" size="lg" fontFamily="PoppinsBold">
+                Save Profile
+              </Text>
+            </TouchableOpacity>
+          </VStack>
+        </ScreenWrapper>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 

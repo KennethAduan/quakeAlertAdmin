@@ -12,10 +12,14 @@ import { ScreenWrapper } from '~/src/components/layouts';
 import LoadingNoDataAnimation from '~/src/components/loaders/LoadingNoDataAnimation';
 import { COLORS } from '~/src/constants/color';
 import { fetchAlertData } from '~/src/hooks/firebase/fetchAlertData';
+import useFetchNotification from '~/src/hooks/notifications/fetchNotification';
+import useNotificationTrigger from '~/src/hooks/notifications/notificationTrigger';
 // import { useAuth } from '~/src/services/state/context/authContex';
 
 const Page = () => {
   // const { logout } = useAuth();
+  useFetchNotification();
+  useNotificationTrigger();
   const [alertData, setAlertData] = useState<any>(null);
   const [loading, setLoading] = useState(true); // Initialize loading state
 

@@ -1,4 +1,4 @@
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, orderBy } from 'firebase/firestore';
 import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { db } from '~/src/services/firebase/config';
@@ -6,7 +6,8 @@ import { db } from '~/src/services/firebase/config';
 const FetchRescueRequest = (status: string) => {
   const rescueRequestQuery = query(
     collection(db, 'rescueRequest'),
-    where('data.status', '==', status)
+    where('data.status', '==', status),
+    orderBy('data.date', 'desc') // Sort by date in descending order
   );
 
   const [value, loading, error] = useCollection(rescueRequestQuery, {

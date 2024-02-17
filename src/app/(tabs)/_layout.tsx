@@ -1,4 +1,4 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Foundation } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
 import { COLORS } from '~/src/constants/color';
@@ -31,6 +31,15 @@ const Layout = () => {
             ) : (
               <Ionicons name="home-outline" size={size} color={color} />
             ),
+        }}
+      />
+      <Tabs.Screen
+        name="summary"
+        options={{
+          title: 'Summary',
+          tabBarIcon: ({ size, color }) => (
+            <Foundation name="graph-bar" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen

@@ -14,15 +14,15 @@ const useFetchNotification = () => {
 
     const unsubscribe = onValue(statusRef, (snapshot) => {
       const status = snapshot.val();
-      console.log('Status:', status);
+      // console.log('Status:', status);
 
       // Compare current status with previous status
       if (!previousStatus || JSON.stringify(previousStatus) !== JSON.stringify(status)) {
         // Accessing nested fields correctly
-        const { date, level, time, location } = status?.detected?.status ?? {};
-        console.log('Date:', date);
-        console.log('Level:', level);
-        console.log('Time:', time);
+        const { date, level, location } = status?.detected?.status ?? {};
+        // console.log('Date:', date);
+        // console.log('Level:', level);
+        // console.log('Time:', time);
         const headerTitle = level + ' ' + location;
         setTitle(headerTitle);
         setBody(date);
